@@ -82,7 +82,7 @@ function removeItem(e){
     if (e.target.tagName==='I') {
         if (confirm("Quieres eliminar el elemento?")) {
             e.target.parentElement.parentElement.remove();
-            removeFromLocalStore(e.target.parentElement.parentElement.textContent)
+            removeFromLocalStore(e.target.parentElement.parentElement.textContent);
             //to check if are there any element
             checkFilterClearElements();
         }
@@ -90,19 +90,26 @@ function removeItem(e){
 }
 function removeFromLocalStore(item){
     let itemFromlocalStorage=getItemsFromStorage();
-    console.log(item);
+    // console.log(item);
 
     //filter returns a new array without the ona that we spicify
     itemFromlocalStorage=itemFromlocalStorage.filter((i)=>i !== item);
 
+    //and here i set the new list with the value
     localStorage.setItem('items',JSON.stringify(itemFromlocalStorage));
     
 }
+
 const deleteAll=(e)=>{
     // itemList.innerHTML='';
     if (confirm("Deses borrar todos los elemtnos?")) {
         while(itemList.firstChild){
             itemList.removeChild(itemList.firstChild);
+
+            //remove all from localStorage
+            localStorage.removeItem('items');
+            //i cant use the one underneath because it remove all the keys from the localStorage
+            // localStorage.clear();
             checkFilterClearElements();
         }
     }
