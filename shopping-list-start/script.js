@@ -71,15 +71,32 @@ function DisplayItemsContentLoaded(){
     checkFilterClearElements();
 }
 
+function onClickItem(e){
+    //if someone click on the icon
+    removeItem(e);
+
+}
+
 //this is the function from the icon
 function removeItem(e){
     if (e.target.tagName==='I') {
-
         if (confirm("Quieres eliminar el elemento?")) {
             e.target.parentElement.parentElement.remove();
+            removeFromLocalStore(e.target.parentElement.parentElement.textContent)
+            //to check if are there any element
             checkFilterClearElements();
         }
     }
+}
+function removeFromLocalStore(item){
+    let itemFromlocalStorage=getItemsFromStorage();
+    console.log(item);
+
+    //filter returns a new array without the ona that we spicify
+    itemFromlocalStorage=itemFromlocalStorage.filter((i)=>i !== item);
+
+    localStorage.setItem('items',JSON.stringify(itemFromlocalStorage));
+    
 }
 const deleteAll=(e)=>{
     // itemList.innerHTML='';
@@ -140,7 +157,7 @@ const isAllNone=(array)=>{
 const initApp=()=>{
 
     itemForm.addEventListener('submit',onAddItemSubmit);
-    itemList.addEventListener('click',removeItem);
+    itemList.addEventListener('click',onClickItem);
     itemClearBtn.addEventListener('click',deleteAll);
     filter.addEventListener('input',filterItems);
     document.addEventListener('DOMContentLoaded',DisplayItemsContentLoaded);
