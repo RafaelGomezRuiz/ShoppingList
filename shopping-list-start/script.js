@@ -69,7 +69,7 @@ const filterItems=(e)=>{
 
     ListLi.forEach (element=>{
         const itemName=element.firstChild.textContent.toLowerCase();
-        
+        //if nothing match it returns -1
         if (itemName.indexOf(text) != -1) {
             element.style.display="flex";
         }
@@ -77,6 +77,25 @@ const filterItems=(e)=>{
             element.style.display="none";
         }
     })
+    isAllNone(ListLi);
+}
+const isAllNone=(array)=>{
+    let cantidad=0;
+    array.forEach(element=>{
+    if(element.style.display==="none"){
+        cantidad+=1;
+    }})
+
+   if (cantidad===array.length ) {
+    const text=document.createElement('p');
+    text.textContent="no one";
+    text.className="no-one";
+    itemList.appendChild(text);
+   }
+   else if(itemList.querySelector('.no-one')){
+    const element=itemList.querySelector('.no-one');
+    itemList.removeChild(element);
+   }
 }
 
 itemForm.addEventListener('submit',addItem);
