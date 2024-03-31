@@ -6,6 +6,8 @@ function removeItem(e){
         removeFromLocalStore(e.target.parentElement.parentElement.textContent);
         //to check if are there any element
         stateOfElements();
+        btnAddItem.innerHTML=`<i class="fa-solid fa-plus"></i> Add Item`;
+        btnAddItem.style.backgroundColor='';
     }
 }
 
@@ -22,8 +24,8 @@ localStorage.setItem('items',JSON.stringify(itemFromlocalStorage));
 }
 
 const deleteAll=()=>{
-// itemList.innerHTML='';
-if (confirm("Deses borrar todos los elemtnos?")) {
+    if (confirm("Deses borrar todos los elemtnos?")) {
+    // itemList.innerHTML='';
     while(itemList.firstChild){
         itemList.removeChild(itemList.firstChild);
 

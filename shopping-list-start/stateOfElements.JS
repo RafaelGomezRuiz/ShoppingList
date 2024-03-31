@@ -1,6 +1,8 @@
 const itemExists=(item)=>{
     const elements=getItemsFromStorage();
+    //includes return a bool vale
     return elements.includes(item);
+    
 }
 
 const stateOfElements=()=>{

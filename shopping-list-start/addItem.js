@@ -6,6 +6,7 @@ function onAddItemSubmit(e){
         alert("the field is empty");
         return;
     }
+    
     if (editMode) {
             const itemToEdit=itemList.querySelector('.edit-mode');
             const inputValue=itemInput.value;
