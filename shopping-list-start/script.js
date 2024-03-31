@@ -2,6 +2,10 @@ const itemForm=document.getElementById('item-form');
 const itemInput=document.getElementById('item-input');
 const itemList=document.getElementById('item-list');
 const itemClearBtn=document.getElementById('clear');
+const btnAddItem=document.getElementById('btn-add');
+
+let editMode=false;
+
 const filter=document.getElementById('filter');
 
 
@@ -70,12 +74,28 @@ function DisplayItemsContentLoaded(){
     }
     checkFilterClearElements();
 }
-
+// ++++++++++++++++++++++++++++++++ update
 function onClickItem(e){
     //if someone click on the icon
     removeItem(e);
+    //setValueToUpdate(e);
 
 }
+// function setValueToUpdate(e){
+//     if (e.target.tagName==='LI') {
+//         itemInput.value=e.target.textContent;
+//         removeFromLocalStore(e.target.textContent);
+//         changeBtnAddValue(btnAddItem,"Update");
+//     }
+// }
+// function changeBtnAddValue(button,text){
+//     button.textContent=text;
+// }
+// function updateItem(e){
+//     addItemToDom(itemInput.value);
+//     addItemToLocalStore(itemInput.value);
+//     DisplayItemsContentLoaded();
+// }
 
 //this is the function from the icon
 function removeItem(e){
@@ -88,6 +108,7 @@ function removeItem(e){
         }
     }
 }
+
 function removeFromLocalStore(item){
     let itemFromlocalStorage=getItemsFromStorage();
     // console.log(item);
@@ -161,10 +182,15 @@ const isAllNone=(array)=>{
     itemList.removeChild(element);
    }
 }
+
+
+
+//btnAddItem.addEventListener('click',updateItem);
+
 const initApp=()=>{
 
     itemForm.addEventListener('submit',onAddItemSubmit);
-    itemList.addEventListener('click',onClickItem);
+    itemList.addEventListener('click',removeItem);
     itemClearBtn.addEventListener('click',deleteAll);
     filter.addEventListener('input',filterItems);
     document.addEventListener('DOMContentLoaded',DisplayItemsContentLoaded);
