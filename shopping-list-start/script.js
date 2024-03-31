@@ -2,6 +2,8 @@ const itemForm=document.getElementById('item-form');
 const itemInput=document.getElementById('item-input');
 const itemList=document.getElementById('item-list');
 const itemClearBtn=document.getElementById('clear');
+
+//i had a event listener for a submit fron the form 
 const btnAddItem=document.getElementById('btn-add');
 
 let editMode=false;
@@ -18,13 +20,33 @@ function onAddItemSubmit(e){
         alert("the field is empty");
         return;
     }
-    addItemToDom(newItem);
-    addItemToLocalStore(newItem);
+    if (editMode) {
+            const itemToEdit=itemList.querySelector('.edit-mode');
+            const inputValue=itemInput.value;
+            removeFromLocalStore(inputValue);
+            itemToEdit.remove();
+            btnAddItem.innerHTML=`<i class="fa-solid fa-plus"></i> Add Item`;
+            btnAddItem.style.backgroundColor='';
+  
+    }else{
+        if(itemExists(newItem)){
+            alert('Item already exists');
+            return;
+        }
 
-    checkFilterClearElements();
-    itemInput.value='';
+    }
+  
+        addItemToDom(newItem);
+        addItemToLocalStore(newItem);
+        
+    stateOfElements();
     
 }
+const itemExists=(item)=>{
+    const elements=getItemsFromStorage();
+    return elements.includes(item);
+}
+
 //this function create the div with the value
 function addItemToDom(item){
     const li=document.createElement('li');
@@ -72,56 +94,60 @@ function DisplayItemsContentLoaded(){
             addItemToDom(item);
         })
     }
-    checkFilterClearElements();
+    stateOfElements();
 }
 // ++++++++++++++++++++++++++++++++ update
 function onClickItem(e){
-    //if someone click on the icon
-    removeItem(e);
-    //setValueToUpdate(e);
+    if (e.target.tagName==='I') {
+        //if someone click on the icon
+        removeItem(e);
+    }
+    else if(e.target.tagName==='LI')
+    {
+        setValueToEdit(e);
+    }
+}
+
+function setValueToEdit(item){
+        editMode=true;
+        
+        //to avoid that two element got the color at the same time
+        itemList.querySelectorAll('li').forEach(li=>{
+            li.classList.remove('edit-mode');
+        })
+
+        item.target.classList.add('edit-mode');
+
+        btnAddItem.innerHTML='<i class="fa-solid fa-pen"></i> Update Item';
+        btnAddItem.style.backgroundColor='#228B22';
+        itemInput.value=item.target.textContent;
 
 }
-// function setValueToUpdate(e){
-//     if (e.target.tagName==='LI') {
-//         itemInput.value=e.target.textContent;
-//         removeFromLocalStore(e.target.textContent);
-//         changeBtnAddValue(btnAddItem,"Update");
-//     }
-// }
-// function changeBtnAddValue(button,text){
-//     button.textContent=text;
-// }
-// function updateItem(e){
-//     addItemToDom(itemInput.value);
-//     addItemToLocalStore(itemInput.value);
-//     DisplayItemsContentLoaded();
-// }
+
 
 //this is the function from the icon
 function removeItem(e){
-    if (e.target.tagName==='I') {
         if (confirm("Quieres eliminar el elemento?")) {
             e.target.parentElement.parentElement.remove();
             removeFromLocalStore(e.target.parentElement.parentElement.textContent);
             //to check if are there any element
-            checkFilterClearElements();
+            stateOfElements();
         }
-    }
 }
 
-function removeFromLocalStore(item){
+function removeFromLocalStore(itemValue){
     let itemFromlocalStorage=getItemsFromStorage();
     // console.log(item);
 
     //filter returns a new array without the ona that we spicify
-    itemFromlocalStorage=itemFromlocalStorage.filter((i)=>i !== item);
+    itemFromlocalStorage=itemFromlocalStorage.filter((i)=>i !== itemValue);
 
     //and here i set the new list with the value
     localStorage.setItem('items',JSON.stringify(itemFromlocalStorage));
     
 }
 
-const deleteAll=(e)=>{
+const deleteAll=()=>{
     // itemList.innerHTML='';
     if (confirm("Deses borrar todos los elemtnos?")) {
         while(itemList.firstChild){
@@ -131,11 +157,15 @@ const deleteAll=(e)=>{
             localStorage.removeItem('items');
             //i cant use the one underneath because it remove all the keys from the localStorage
             // localStorage.clear();
-            checkFilterClearElements();
+            stateOfElements();
         }
     }
 }
-const checkFilterClearElements=()=>{
+const stateOfElements=()=>{
+    //to clean the input bar
+    itemInput.value='';
+
+    //To show items throuw the filter function
     const ListLi=itemList.querySelectorAll('li');
 
     if (ListLi.length===0) {
@@ -146,6 +176,10 @@ const checkFilterClearElements=()=>{
         itemClearBtn.style.display='block';
         filter.style.display='block';
     }
+
+    //to handle the function of the button submit
+    editMode=false;
+
 }
 
 const filterItems=(e)=>{
@@ -179,7 +213,7 @@ const isAllNone=(array)=>{
    }
    else if(itemList.querySelector('.no-one')){
     const element=itemList.querySelector('.no-one');
-    itemList.removeChild(element);
+    element.remove();
    }
 }
 
@@ -190,10 +224,9 @@ const isAllNone=(array)=>{
 const initApp=()=>{
 
     itemForm.addEventListener('submit',onAddItemSubmit);
-    itemList.addEventListener('click',removeItem);
+    itemList.addEventListener('click',onClickItem);
     itemClearBtn.addEventListener('click',deleteAll);
     filter.addEventListener('input',filterItems);
     document.addEventListener('DOMContentLoaded',DisplayItemsContentLoaded);
 }
-
 initApp();
